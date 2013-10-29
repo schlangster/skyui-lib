@@ -1,7 +1,7 @@
 ﻿import skyui.util.GlobalFunctions;
-import uilib_1.Messages;
+import uilib.Messages;
 
-class uilib_1.NotificationArea extends MovieClip
+class uilib.NotificationArea extends MovieClip
 {
   /* CONSTANTS */
 	

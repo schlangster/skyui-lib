@@ -1,4 +1,4 @@
-﻿dynamic class uilib_1.Messages extends MovieClip
+﻿dynamic class uilib.Messages extends MovieClip
 {
 	static var MAX_SHOWN: Number = 15;
 	static var Y_SPACING: Number = 15;
