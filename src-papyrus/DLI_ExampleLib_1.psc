@@ -23,10 +23,10 @@ int property	RegistrationCount auto
 
 ; @override DLI_PeerBase
 function OnInit()
-	parent.OnInit()
 	RegistrationCount = 0
-	RegisteredForms = new Form[1]
-	; RegisteredForms is properly initialized lazily
+	RegisteredForms = new Form[128]
+
+	parent.OnInit()
 endFunction
 
 ; @interface
@@ -37,37 +37,17 @@ function InsertForm(Form a_form)
 	endIf
 endFunction
 
-; @interface
-function ShowForms()
-	DLI_ExampleLib_1 master = GetMasterInstance() as DLI_ExampleLib_1
-	if (master)
-		master.ShowFormsImpl()
-	endIf
-endFunction
-
 function InsertFormImpl(Form a_form)
 	Lock()
 
-	if (RegisteredForms.length == 1)
-		RegisteredForms = new Form[128]
+	if (RegistrationCount < 128)
+		int index = RegistrationCount
+		RegisteredForms[index] = a_form
+		RegistrationCount += 1
+		Debug.Trace(DLI_GetPeerId() + "> InsertForm: (" + index + ") -> " + a_form)
+	else
+		Debug.Trace(DLI_GetPeerId() + "> InsertForm: LIST IS FULL")
 	endIf
-
-	RegisteredForms[RegistrationCount] = a_form
-	RegistrationCount += 1
-
-	Debug.Trace(DLI_GetPeerId() + "> LIB1: Inserted " + a_form)
-
-	Unlock()
-endFunction
-
-function ShowFormsImpl()
-	Lock()
-
-	int i = 0
-	while (i<RegistrationCount)
-		Debug.Trace(DLI_GetPeerId() + "> LIB1: " + i + " => " + RegisteredForms[i])
-		i += 1
-	endWhile
 
 	Unlock()
 endFunction
@@ -80,8 +60,9 @@ function MigrateData(DLI_LibBase a_newMaster)
 	if (target)
 		target.RegisteredForms = RegisteredForms
 		target.RegistrationCount = RegistrationCount
+		
 		; Cleanup old state
-		RegisteredForms = new Form[1]
+		RegisteredForms = new Form[128]
 		RegistrationCount = 0
 	endIf
 endFunction
@@ -91,8 +72,8 @@ endFunction
 bool _lock
 
 function Lock()
-	while (TryLock())
-		Utility.Wait(0.5)
+	while (! TryLock())
+		Utility.Wait(0.1)
 	endWhile
 endFunction
  
@@ -106,5 +87,5 @@ bool function TryLock()
 endFunction
  
 function Unlock()
-	_Lock = false
+	_lock = false
 endFunction
