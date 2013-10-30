@@ -31,15 +31,17 @@ endFunction
 
 ; @interface
 function InsertForm(Form a_form)
-	if (MasterInstance)
-		(MasterInstance as DLI_ExampleLib_1).InsertFormImpl(a_form)
+	DLI_ExampleLib_1 master = GetMasterInstance() as DLI_ExampleLib_1
+	if (master)
+		master.InsertFormImpl(a_form)
 	endIf
 endFunction
 
 ; @interface
 function ShowForms()
-	if (MasterInstance)
-		(MasterInstance as DLI_ExampleLib_1).ShowFormsImpl()
+	DLI_ExampleLib_1 master = GetMasterInstance() as DLI_ExampleLib_1
+	if (master)
+		master.ShowFormsImpl()
 	endIf
 endFunction
 

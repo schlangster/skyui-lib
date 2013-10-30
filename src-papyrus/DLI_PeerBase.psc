@@ -148,7 +148,7 @@ state JOIN_PHASE
 			RegisterForSingleUpdate(5)
 
 			if (DLI_Invalidated)
-				Debug.Trace("Invalidate started by " + DLI_GetPeerId() + " : " + DLI_Tail.Dump())
+				;Debug.Trace("Invalidate started by " + DLI_GetPeerId() + " : " + DLI_Tail.Dump())
 				DLI_Invalidated = false
 
 				GotoState("BUSY")

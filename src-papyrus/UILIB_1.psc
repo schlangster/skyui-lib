@@ -22,34 +22,39 @@ string property		HUD_MENU = "HUD Menu" autoReadOnly
 
 ; @interface
 function Notification(string msg)
-	UILIB_1 target = MasterInstance as UILIB_1
-	if (target)
-		target.NotificationImpl(msg)
+	UILIB_1 master = GetMasterInstance() as UILIB_1
+	if (master)
+		master.NotificationImpl(msg)
 	endIf
 endFunction
 
 function NotificationImpl(string msg)
-	if (InitNotificationArea())
+	if (PrepareNotificationArea())
 		UI.InvokeString(HUD_MENU, "_root.HUDMovieBaseInstance.notificationAreaContainer.notificationArea.ShowMessage", msg)
 	endIf
 endFunction
 
 ; Injects a new notification area SWF into the HUDMenu at runtime.
 ; The loaded SWF will then hook ShowMessage and Update to intercept messages of the default message area.
-bool function InitNotificationArea()
+bool function PrepareNotificationArea()
+
+	; Already injected?
 	int releaseIdx = UI.GetInt(HUD_MENU, "_global.uilib.NotificationArea.UILIB_VERSION")
 	if (releaseIdx > 0)
 		return true
 	endIf
 
-	; Not injected yet
-
-	string[] args = new string[2]
-	args[0] = "notificationAreaContainer"
-	args[1] = "-16380"
-	
 	; Create empty container clip
-	UI.InvokeStringA(HUD_MENU, "_root.HUDMovieBaseInstance.createEmptyMovieClip", args)
+	int handle = UICallback.Create(HUD_MENU, "_root.HUDMovieBaseInstance.createEmptyMovieClip")
+	if (!handle)
+		return false
+	endIf
+
+	UICallback.PushString(handle, "notificationAreaContainer")
+	UICallback.PushInt(handle, -16380)
+	if (! UICallback.Send(handle))
+		return false
+	endIf
 
 	; Try to load from Interface/exported/hudmenu.gfx
 	UI.InvokeString(HUD_MENU, "_root.HUDMovieBaseInstance.notificationAreaContainer.loadMovie", "uilib/UILIB_1_notificationarea.swf")
@@ -65,7 +70,7 @@ bool function InitNotificationArea()
 
 	; Injection failed
 	if (releaseIdx == 0)
-		Debug.Trace("InitNotificationArea() failed")
+		Debug.Trace("PrepareNotificationArea() failed")
 		return false
 	endIf
 

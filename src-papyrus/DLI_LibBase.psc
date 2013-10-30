@@ -2,11 +2,15 @@ scriptname DLI_LibBase extends DLI_PeerBase
 
 import Math
 
+; PRIVATE VARIABLES -------------------------------------------------------------------------------
+
+DLI_LibBase	_master
+bool		_ready
+
+
+
+
 ; PROPERTIES --------------------------------------------------------------------------------------
-
-DLI_LibBase property	MasterInstance auto
-bool property			IsReady auto
-
 
 ; INITIALIZATION ----------------------------------------------------------------------------------
 
@@ -16,6 +20,7 @@ function OnInit()
 endFunction
 
 event OnGameReload(bool a_isOnInit)
+	_ready = false
 	parent.OnGameReload(a_isOnInit)
 endEvent
 
@@ -110,22 +115,56 @@ endFunction
 function MigrateData(DLI_LibBase a_newMaster)
 endFunction
 
+; @interface
+DLI_LibBase function GetMasterInstance(bool a_noWait = false)
+	if (a_noWait == false)
+		AwaitReady()
+	endIf
+
+	return _master
+endFunction
+
+; @interface
+bool function IsReady()
+	return _ready
+endFunction
+
+; @interface
+bool function AwaitReady(int a_timeout = 200)
+	if (_ready)
+		return true
+	endIf
+
+	while (a_timeout > 0 && !_ready)
+		a_timeout -= 1
+		if (Utility.IsInMenuMode())
+			Utility.WaitMenuMode(0.1)
+		else
+			Utility.Wait(0.1)
+		endIf
+	endWhile
+
+	return a_timeout > 0
+endFunction
+
 function SetMaster(string a_libName, DLI_LibBase a_newMaster)
 	; Not our library?
 	if (a_libName != GetLibraryName())
 		return
 	endIf
 
+	_ready = true
+
 	; Nothing changed?
-	if (MasterInstance == a_newMaster)
+	if (_master == a_newMaster)
 		return
 	endIf
 
-	if (MasterInstance == self)
+	if (_master == self)
 		MigrateData(a_newMaster)
 	endIf
 
-	MasterInstance = a_newMaster
+	_master = a_newMaster
 endFunction
 
 int function CalcLibraryRank(string a_name)
