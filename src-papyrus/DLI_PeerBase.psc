@@ -144,7 +144,7 @@ state JOIN_PHASE
 			DLI_SendJoinRequest()
 			RegisterForSingleUpdate(0.1)
 		else
-			Debug.Trace(DLI_GetPeerId() + " : I think im alone now")
+			;Debug.Trace(DLI_GetPeerId() + " : I think im alone now")
 			RegisterForSingleUpdate(5)
 
 			if (DLI_Invalidated)

@@ -8,9 +8,8 @@ DLI_LibBase	_master
 bool		_ready
 
 
-
-
 ; PROPERTIES --------------------------------------------------------------------------------------
+
 
 ; INITIALIZATION ----------------------------------------------------------------------------------
 
@@ -29,7 +28,7 @@ endEvent
 
 ; @override DLI_PeerBase
 event OnInvalidateGroup()	
-	Debug.Trace("Starting InvalidateGroup")
+	;Debug.Trace("Starting InvalidateGroup")
 
 	string[]	libNames = new string[128]
 	int			libCount = 0
@@ -41,7 +40,7 @@ event OnInvalidateGroup()
 	while (continue)
 		string name = p.GetLibraryName()
 		if (name != "" && libNames.Find(name) < 0)
-			Debug.Trace("Found library " + name)
+			;Debug.Trace("Found library " + name)
 			libNames[libCount] = name
 			libCount += 1
 		endIf
@@ -69,7 +68,7 @@ event OnInvalidateGroup()
 			if (maxRank < rank)
 				maxRank = rank
 				newMaster = p
-				Debug.Trace("New max rank library " + newMaster.DLI_GetPeerId() + " " + maxRank)
+				;Debug.Trace("New max rank library " + newMaster.DLI_GetPeerId() + " " + maxRank)
 			endIf
 
 			continue = p != self
@@ -92,7 +91,7 @@ event OnInvalidateGroup()
 			endWhile
 		endIf
 
-		Debug.Trace("Updated all masters to " + newMaster.DLI_GetPeerId())
+		;Debug.Trace("Updated all masters to " + newMaster.DLI_GetPeerId())
 
 		i += 1
 	endWhile
