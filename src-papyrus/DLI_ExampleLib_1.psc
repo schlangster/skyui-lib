@@ -53,7 +53,7 @@ function InsertFormImpl(Form a_form)
 	RegisteredForms[RegistrationCount] = a_form
 	RegistrationCount += 1
 
-	Debug.Trace(GetPeerId() + "> LIB1: Inserted " + a_form)
+	Debug.Trace(DLI_GetPeerId() + "> LIB1: Inserted " + a_form)
 
 	Unlock()
 endFunction
@@ -63,7 +63,7 @@ function ShowFormsImpl()
 
 	int i = 0
 	while (i<RegistrationCount)
-		Debug.Trace(GetPeerId() + "> LIB1: " + i + " => " + RegisteredForms[i])
+		Debug.Trace(DLI_GetPeerId() + "> LIB1: " + i + " => " + RegisteredForms[i])
 		i += 1
 	endWhile
 

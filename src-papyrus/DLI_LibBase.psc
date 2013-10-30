@@ -5,6 +5,7 @@ import Math
 ; PROPERTIES --------------------------------------------------------------------------------------
 
 DLI_LibBase property	MasterInstance auto
+bool property			IsReady auto
 
 
 ; INITIALIZATION ----------------------------------------------------------------------------------
@@ -13,6 +14,10 @@ DLI_LibBase property	MasterInstance auto
 function OnInit()
 	parent.OnInit()
 endFunction
+
+event OnGameReload(bool a_isOnInit)
+	parent.OnGameReload(a_isOnInit)
+endEvent
 
 
 ; EVENTS ------------------------------------------------------------------------------------------
@@ -26,7 +31,7 @@ event OnInvalidateGroup()
 
 	; Phase 1 - Collect lib names
 
-	DLI_LibBase p = Tail as DLI_LibBase
+	DLI_LibBase p = DLI_Tail as DLI_LibBase
 	bool continue = true
 	while (continue)
 		string name = p.GetLibraryName()
@@ -38,7 +43,7 @@ event OnInvalidateGroup()
 
 		continue = p != self
 		if (continue)
-			p = p.Successor as DLI_LibBase
+			p = p.DLI_Successor as DLI_LibBase
 		endIf
 	endWhile
 
@@ -52,37 +57,37 @@ event OnInvalidateGroup()
 		DLI_LibBase newMaster = none
 		int maxRank = -1
 
-		p = Tail as DLI_LibBase
+		p = DLI_Tail as DLI_LibBase
 		continue = true
 		while (continue)
 			int rank = p.CalcLibraryRank(name)
 			if (maxRank < rank)
 				maxRank = rank
 				newMaster = p
-				Debug.Trace("New max rank library " + newMaster.GetPeerId() + " " + maxRank)
+				Debug.Trace("New max rank library " + newMaster.DLI_GetPeerId() + " " + maxRank)
 			endIf
 
 			continue = p != self
 			if (continue)
-				p = p.Successor as DLI_LibBase
+				p = p.DLI_Successor as DLI_LibBase
 			endIf
 		endWhile
 
 		; Set master
 		if (newMaster != none)	
-			p = Tail as DLI_LibBase
+			p = DLI_Tail as DLI_LibBase
 			continue = true
 			while (continue)
 				p.SetMaster(name, newMaster)
 
 				continue = p != self
 				if (continue)
-					p = p.Successor as DLI_LibBase
+					p = p.DLI_Successor as DLI_LibBase
 				endIf
 			endWhile
 		endIf
 
-		Debug.Trace("Updated all masters to " + newMaster.GetPeerId())
+		Debug.Trace("Updated all masters to " + newMaster.DLI_GetPeerId())
 
 		i += 1
 	endWhile

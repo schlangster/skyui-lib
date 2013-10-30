@@ -5,10 +5,10 @@ import Math
 ; debug -------
 
 string function Dump()
-	if (Successor)
-		return GetPeerId() + " -> " + Successor.Dump()
+	if (DLI_Successor)
+		return DLI_GetPeerId() + " -> " + DLI_Successor.Dump()
 	else
-		return GetPeerId() + " -> []"
+		return DLI_GetPeerId() + " -> []"
 	endIf
 endFunction
 
@@ -24,12 +24,12 @@ int		_partitionCount
 
 ; PROPERTIES --------------------------------------------------------------------------------------
 
-DLI_PeerBase property	Successor auto
+DLI_PeerBase property	DLI_Successor auto
 
-DLI_PeerBase property	Head auto
-DLI_PeerBase property	Tail auto
+DLI_PeerBase property	DLI_Head auto
+DLI_PeerBase property	DLI_Tail auto
 
-bool property			Invalidated auto
+bool property			DLI_Invalidated auto
 
 
 ; INITIALIZATION ----------------------------------------------------------------------------------
@@ -39,17 +39,17 @@ function OnInit()
 endFunction
 
 event OnGameReload(bool a_isOnInit)
-	Head = self
-	Tail = self
+	DLI_Head = self
+	DLI_Tail = self
 
-	Successor = none
+	DLI_Successor = none
 	_attemptedAttach = false
-	Invalidated = true
+	DLI_Invalidated = true
 
 	OnGroupReset(a_isOnInit)
 
-	UnregisterAll()
-	RegisterForModEvent("DLI_L1_join_all", "OnJoinRequest")
+	DLI_UnregisterAll()
+	RegisterForModEvent("DLI_L1_join_all", "DLI_OnJoinRequest")
 
 	_partitionIndex = Utility.RandomInt(0, 7)
 	_partitionCount = 0
@@ -72,25 +72,25 @@ endEvent
 event OnUpdate()
 endEvent
 
-event OnJoinRequest(string a_eventName, Form a_sender)
+event DLI_OnJoinRequest(string a_eventName, Form a_sender)
 endEvent
 
 
 ; FUNCTIONS ---------------------------------------------------------------------------------------
 
-function Attach(DLI_PeerBase a_other)
+function DLI_Attach(DLI_PeerBase a_other)
 endFunction
 
-function DoAttach(DLI_PeerBase a_other)
-	Successor = a_other
-	Head = a_other.Head
-	a_other.Head.Tail = Tail
-	Tail.Head = a_other.Head
+function DLI_DoAttach(DLI_PeerBase a_other)
+	DLI_Successor = a_other
+	DLI_Head = a_other.DLI_Head
+	a_other.DLI_Head.DLI_Tail = DLI_Tail
+	DLI_Tail.DLI_Head = a_other.DLI_Head
 
-	Head.Invalidated = true
+	DLI_Head.DLI_Invalidated = true
 endFunction
 
-function UnregisterAll()
+function DLI_UnregisterAll()
 	UnregisterForModEvent("DLI_L1_join_0")
 	UnregisterForModEvent("DLI_L1_join_1")
 	UnregisterForModEvent("DLI_L1_join_2")
@@ -102,14 +102,14 @@ function UnregisterAll()
 	UnregisterForModEvent("DLI_L1_join_all")
 endFunction
 
-function SendJoinRequest()
+function DLI_SendJoinRequest()
 	if (_partitionCount == 8)
 		int handle = ModEvent.Create(self, "DLI_L1_join_all")
 		if (handle)
 			ModEvent.Send(handle)
 		endIf
 	else
-		RegisterForModEvent("DLI_L1_join_" + _partitionIndex, "OnJoinRequest")
+		RegisterForModEvent("DLI_L1_join_" + _partitionIndex, "DLI_OnJoinRequest")
 
 		int joinIndex =  (_partitionIndex + 4) % 8
 		_partitionIndex = (_partitionIndex + 1) % 8
@@ -123,7 +123,7 @@ function SendJoinRequest()
 	endIf
 endFunction
 
-string function	GetPeerId()
+string function	DLI_GetPeerId()
 	return "Peer" + Math.RightShift(GetFormID(), 24)
 endFunction
 
@@ -141,59 +141,44 @@ state JOIN_PHASE
 		endIf
 
 		if (_silenceCounter < 16)
-			SendJoinRequest()
+			DLI_SendJoinRequest()
 			RegisterForSingleUpdate(0.1)
 		else
-			Debug.Trace(GetPeerId() + " : I think im alone now")
+			Debug.Trace(DLI_GetPeerId() + " : I think im alone now")
 			RegisterForSingleUpdate(5)
 
-			if (Invalidated)
-				Debug.Trace("Invalidate started by " + GetPeerId() + " : " + Tail.Dump())
-				Invalidated = false
+			if (DLI_Invalidated)
+				Debug.Trace("Invalidate started by " + DLI_GetPeerId() + " : " + DLI_Tail.Dump())
+				DLI_Invalidated = false
 
 				GotoState("BUSY")
 				OnInvalidateGroup()
-
-				Message m = Game.GetForm(0x0000017E) as Message
-				RegisterForMenu("MessageBoxMenu")
-				m.Show()
-
-				;int handle = UICallback.Create("HUD Menu", "_global.skse.OpenMenu")
-				;if (handle)
-				;	UICallback.PushString(handle, "TweenMenu")
-				;	UICallback.Send(handle)
-				;endIf
 
 				GotoState("JOIN_PHASE")
 			endIf
 		endIf
 	endEvent
 
-	event OnJoinRequest(string a_eventName, Form a_sender)
+	event DLI_OnJoinRequest(string a_eventName, Form a_sender)
 		GotoState("BUSY")
 
 		DLI_PeerBase other = a_sender as DLI_PeerBase
 
-		if (head == self && self != other)
+		if (DLI_Head == self && self != other)
 			_attemptedAttach = true
-			other.Attach(tail)
+			other.DLI_Attach(DLI_Tail)
 		endIf
 
 		gotoState("JOIN_PHASE")
 	endEvent
 
-	function Attach(DLI_PeerBase a_other)
+	function DLI_Attach(DLI_PeerBase a_other)
 		gotoState("")
-		DoAttach(a_other)
-		UnregisterAll()
+		DLI_DoAttach(a_other)
+		DLI_UnregisterAll()
 	endFunction
 
 endState
-
-event OnMenuOpen(string a_menuName)
-	UnregisterForMenu("MessageBoxMenu")
-	UI.SetBool("MessageBoxMenu", "_root.MessageMenu._visible", false)
-endEvent
 
 
 ; BUSY STATE --------------------------------------------------------------------------------------
@@ -204,10 +189,10 @@ state BUSY
 		RegisterForSingleUpdate(0.2)
 	endEvent
 
-	event OnJoinRequest(string a_eventName, Form a_sender)
+	event DLI_OnJoinRequest(string a_eventName, Form a_sender)
 	endEvent
 
-	function Attach(DLI_PeerBase a_other)
+	function DLI_Attach(DLI_PeerBase a_other)
 	endFunction
 
 endState
