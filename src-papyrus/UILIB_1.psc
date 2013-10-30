@@ -21,16 +21,23 @@ string property		HUD_MENU = "HUD Menu" autoReadOnly
 ; FUNCTIONS ---------------------------------------------------------------------------------------
 
 ; @interface
-function Notification(string msg)
+function Notification(string a_message, string a_color = "#FFFFFF")
 	UILIB_1 master = GetMasterInstance() as UILIB_1
 	if (master)
-		master.NotificationImpl(msg)
+		master.NotificationImpl(a_message, a_color)
 	endIf
 endFunction
 
-function NotificationImpl(string msg)
-	if (PrepareNotificationArea())
-		UI.InvokeString(HUD_MENU, "_root.HUDMovieBaseInstance.notificationAreaContainer.notificationArea.ShowMessage", msg)
+function NotificationImpl(string a_message, string a_color)
+	if (! PrepareNotificationArea())
+		return
+	endIf
+	
+	int handle = UICallback.Create(HUD_MENU, "_root.HUDMovieBaseInstance.notificationAreaContainer.notificationArea.ShowMessage")
+	if (handle)
+		UICallback.PushString(handle, a_message)
+		UICallback.PushString(handle, a_color)
+		UICallback.Send(handle)
 	endIf
 endFunction
 
@@ -49,7 +56,6 @@ bool function PrepareNotificationArea()
 	if (!handle)
 		return false
 	endIf
-
 	UICallback.PushString(handle, "notificationAreaContainer")
 	UICallback.PushInt(handle, -16380)
 	if (! UICallback.Send(handle))
