@@ -8,4 +8,6 @@ endEvent
 
 event OnUpdate()
 	UILib1.Notification("Normal Message")
+	UILib1.Notification("Color #123456", "#123456")
+	UILib1.NotificationIcon("Icon Message", "uilib/icon.swf")
 endEvent

@@ -28,6 +28,14 @@ function Notification(string a_message, string a_color = "#FFFFFF")
 	endIf
 endFunction
 
+; @interface
+function NotificationIcon(string a_message, string a_iconPath, int a_iconFrame = 0, string a_color = "#FFFFFF")
+	UILIB_1 master = GetMasterInstance() as UILIB_1
+	if (master)
+		master.NotificationIconImpl(a_message, a_iconPath, a_iconFrame, a_color)
+	endIf
+endFunction
+
 function NotificationImpl(string a_message, string a_color)
 	if (! PrepareNotificationArea())
 		return
@@ -37,6 +45,21 @@ function NotificationImpl(string a_message, string a_color)
 	if (handle)
 		UICallback.PushString(handle, a_message)
 		UICallback.PushString(handle, a_color)
+		UICallback.Send(handle)
+	endIf
+endFunction
+
+function NotificationIconImpl(string a_message, string a_iconPath, int a_iconFrame, string a_color)
+	if (! PrepareNotificationArea())
+		return
+	endIf
+	
+	int handle = UICallback.Create(HUD_MENU, "_root.HUDMovieBaseInstance.notificationAreaContainer.notificationArea.ShowIconMessage")
+	if (handle)
+		UICallback.PushString(handle, a_message)
+		UICallback.PushString(handle, a_color)
+		UICallback.PushString(handle, a_iconPath)
+		UICallback.PushInt(handle, a_iconFrame)
 		UICallback.Send(handle)
 	endIf
 endFunction

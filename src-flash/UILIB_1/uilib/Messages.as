@@ -32,17 +32,48 @@
 	{
 		var bQueuedMessage = MessageArray.length > 0;
 		
-		if (bQueuedMessage && !bAnimating && ShownCount < MAX_SHOWN) {
-			ShownMessageArray.push(attachMovie("MessageText", "Text" + InstanceCounter++, getNextHighestDepth(), {_x: 0, _y: 0}));
-			ShownMessageArray[ShownMessageArray.length - 1].TextFieldClip.tf1.html = true;
-			ShownMessageArray[ShownMessageArray.length - 1].TextFieldClip.tf1.textAutoSize = "shrink";
-			ShownMessageArray[ShownMessageArray.length - 1].TextFieldClip.tf1.htmlText = MessageArray.shift();
+		if (bQueuedMessage && !bAnimating && ShownCount < MAX_SHOWN)
+		{
+			var msgData = MessageArray.shift();
+			
+			var msgClip = attachMovie("MessageText", "Text" + InstanceCounter++, getNextHighestDepth(), {_x: 0, _y: 0});
+			ShownMessageArray.push(msgClip);
+			
+			msgClip.TextFieldClip.tf1.html = true;
+			msgClip.TextFieldClip.tf1.textAutoSize = "shrink";
+			msgClip.TextFieldClip.tf1.htmlText = msgData.text;
+			
+			if (msgData.iconPath)
+			{
+				msgClip.TextFieldClip.tf1._x = 26; // Adjust text position
+				
+				var iconLoader = new MovieClipLoader();
+				iconLoader.addListener(msgClip);
+				iconLoader.loadClip(msgData.iconPath, msgClip.TextFieldClip.iconHolder);
+				
+				if (msgData.iconFrame)
+				{
+					msgClip.iconFrame = msgData.iconFrame;
+					msgClip.onLoadInit = function(a_icon: MovieClip)
+					{
+						a_icon.gotoAndStop(this.iconFrame);
+					};
+				}
+			}
+			else
+			{
+				msgClip.TextFieldClip.iconHolder._visible = false;
+			}
+			
 			bAnimating = true;
 			ySpacing = 0;
+			
 			onEnterFrame = function (): Void
 			{
-				if (ySpacing < Y_SPACING) {
-					for (var i=0; i < ShownMessageArray.length - 1; i++) {
+				if (ySpacing < Y_SPACING)
+				{
+					for (var i=0; i < ShownMessageArray.length - 1; i++)
+					{
 						ShownMessageArray[i]._y = ShownMessageArray[i]._y + 2;
 					}
 					++ySpacing;
@@ -55,15 +86,18 @@
 			};
 			++ShownCount;
 		}
-		for (var i=0; i < ShownMessageArray.length; i++) {
-			if (ShownMessageArray[i]._currentFrame >= END_ANIM_FRAME) {
+		for (var i=0; i < ShownMessageArray.length; i++)
+		{
+			if (ShownMessageArray[i]._currentFrame >= END_ANIM_FRAME)
+			{
 				var aShownMessageArray: Array = ShownMessageArray.splice(i, 1);
 				aShownMessageArray[0].removeMovieClip();
 				--ShownCount;
 				bAnimating = false;
 			}
 		}
-		if (!bQueuedMessage && !bAnimating && ShownMessageArray.length > 0) {
+		if (!bQueuedMessage && !bAnimating && ShownMessageArray.length > 0)
+		{
 			bAnimating = true;
 			ShownMessageArray[0].gotoAndPlay("FadeOut");
 		}

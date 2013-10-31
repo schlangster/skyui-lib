@@ -23,10 +23,18 @@ class uilib.NotificationArea extends MovieClip
 	
   /* PAPYRUS INTERFACE */
 	
-	function ShowMessage(a_message: String, a_color: String): Void
+	public function ShowMessage(a_message: String, a_color: String): Void
 	{
 		var translated = Translator.translateNested(a_message);
-		messageHolder.MessageArray.push("<font color='" + "'>" + translated + "</font>");
+		var msgData = {text: "<font color='" + a_color + "'>" + translated + "</font>"};
+		messageHolder.MessageArray.push(msgData);
+	}
+	
+	public function ShowIconMessage(a_message: String, a_color: String, a_iconPath: String, a_iconFrame: Number): Void
+	{
+		var translated = Translator.translateNested(a_message);
+		var msgData = {text: "<font color='" + a_color + "'>" + translated + "</font>", iconPath: a_iconPath, iconFrame: a_iconFrame};
+		messageHolder.MessageArray.push(msgData);
 	}
 	
   /* PUBLIC FUNCTIONS */
