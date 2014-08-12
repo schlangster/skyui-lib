@@ -104,8 +104,9 @@ endFunction
 
 function DLI_SendJoinRequest()
 	if (_partitionCount == 8)
-		int handle = ModEvent.Create(self, "DLI_L1_join_all")
+		int handle = ModEvent.Create("DLI_L1_join_all")
 		if (handle)
+			ModEvent.PushForm(handle, self)
 			ModEvent.Send(handle)
 		endIf
 	else
@@ -114,8 +115,9 @@ function DLI_SendJoinRequest()
 		int joinIndex =  (_partitionIndex + 4) % 8
 		_partitionIndex = (_partitionIndex + 1) % 8
 
-		int handle = ModEvent.Create(self, "DLI_L1_join_" + joinIndex)
+		int handle = ModEvent.Create("DLI_L1_join_" + joinIndex)
 		if (handle)
+			ModEvent.PushForm(handle, self)
 			ModEvent.Send(handle)
 		endIf
 

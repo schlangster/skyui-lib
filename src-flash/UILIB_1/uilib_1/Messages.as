@@ -1,4 +1,4 @@
-﻿class uilib.Messages extends MovieClip
+﻿class uilib_1.Messages extends MovieClip
 {
   /* CONSTANTS */
   

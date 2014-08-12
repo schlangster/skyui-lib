@@ -62,6 +62,10 @@ function NotificationIconImpl(string a_message, string a_iconPath, int a_iconFra
 		UICallback.PushInt(handle, a_iconFrame)
 		UICallback.Send(handle)
 	endIf
+
+	
+	UI.OpenCustomMenu("textentrymenu")
+	
 endFunction
 
 ; Injects a new notification area SWF into the HUDMenu at runtime.
