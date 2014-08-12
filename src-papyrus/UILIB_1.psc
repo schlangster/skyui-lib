@@ -19,7 +19,6 @@ Int iInput
 Function TextInputMenu_Open(Form akClient) Global
 	akClient.RegisterForModEvent("UILIB_1_textInputOpen", "OnTextInputOpen")
 	akClient.RegisterForModEvent("UILIB_1_textInputClose", "OnTextInputClose")
-	;UI.OpenCustomMenu("uilib/uilib_1_textinputmenu")
 	UI.OpenCustomMenu("uilib/uilib_1_textinputmenu")
 EndFunction
 
@@ -69,7 +68,6 @@ EndEvent
 Function ListMenu_Open(Form akClient) Global
 	akClient.RegisterForModEvent("UILIB_1_listMenuOpen", "OnListMenuOpen")
 	akClient.RegisterForModEvent("UILIB_1_listMenuClose", "OnListMenuClose")
-	;UI.OpenCustomMenu("uilib/uilib_1_listmenu")
 	UI.OpenCustomMenu("uilib/uilib_1_listmenu")
 EndFunction
 
