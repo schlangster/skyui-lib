@@ -15,8 +15,9 @@ class uilib_1.NotificationArea extends MovieClip
 
   /* PRIVATE VARIABLES */
 
-	public var myMaster_: Object = null;
-	public var isActive_: Boolean = false;
+	private var myMaster_: Object = null;
+	private var isActive_: Boolean = false;
+	private var rootPath_: String = "";
 
   /* INITIALIZATION */
 	
@@ -27,6 +28,11 @@ class uilib_1.NotificationArea extends MovieClip
 	}
 	
   /* PAPYRUS INTERFACE */
+  
+	public function SetRootPath(a_path: String): Void
+	{
+		rootPath_ = a_path;
+	}
 	
 	public function ShowMessage(a_message: String, a_color: String): Void
 	{
@@ -46,6 +52,9 @@ class uilib_1.NotificationArea extends MovieClip
 			myMaster_.ShowMessage(a_message, a_color, a_iconPath, a_iconFrame);
 			return;
 		}
+		
+		// Account for exported/
+		a_iconPath = rootPath_ + a_iconPath;
 		
 		var translated = Translator.translateNested(a_message);
 		var msgData = {text: "<font color='" + a_color + "'>" + translated + "</font>", iconPath: a_iconPath, iconFrame: a_iconFrame};
