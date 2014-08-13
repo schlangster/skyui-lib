@@ -162,6 +162,8 @@ Bool Function NotificationMenu_PrepareArea() global
 				Debug.Trace("===== UILib: Notification injection failed =====")
 				Return False
 			EndIf
+
+			UI.InvokeString("HUD Menu", "_root.HUDMovieBaseInstance.uilib_1_notificationAreaContainer.SetRootPath", "exported/")
 		EndIf
 	EndIf
 	Return True
