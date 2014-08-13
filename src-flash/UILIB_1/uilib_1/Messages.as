@@ -86,7 +86,7 @@
 			};
 			++ShownCount;
 		}
-		for (var i=0; i < ShownMessageArray.length; i++)
+		for (var i=0; i<ShownMessageArray.length; i++)
 		{
 			if (ShownMessageArray[i]._currentFrame >= END_ANIM_FRAME)
 			{

@@ -13,6 +13,11 @@ class uilib_1.NotificationArea extends MovieClip
   
 	public var messageHolder: Messages;
 
+  /* PRIVATE VARIABLES */
+
+	public var myMaster_: Object = null;
+	public var isActive_: Boolean = false;
+
   /* INITIALIZATION */
 	
 	public function NotificationArea()
@@ -25,6 +30,11 @@ class uilib_1.NotificationArea extends MovieClip
 	
 	public function ShowMessage(a_message: String, a_color: String): Void
 	{
+		if (myMaster_ != null) {
+			myMaster_.ShowMessage(a_message, a_color);
+			return;
+		}
+		
 		var translated = Translator.translateNested(a_message);
 		var msgData = {text: "<font color='" + a_color + "'>" + translated + "</font>"};
 		messageHolder.MessageArray.push(msgData);
@@ -32,14 +42,68 @@ class uilib_1.NotificationArea extends MovieClip
 	
 	public function ShowIconMessage(a_message: String, a_color: String, a_iconPath: String, a_iconFrame: Number): Void
 	{
+		if (myMaster_ != null) {
+			myMaster_.ShowMessage(a_message, a_color, a_iconPath, a_iconFrame);
+			return;
+		}
+		
 		var translated = Translator.translateNested(a_message);
 		var msgData = {text: "<font color='" + a_color + "'>" + translated + "</font>", iconPath: a_iconPath, iconFrame: a_iconFrame};
 		messageHolder.MessageArray.push(msgData);
 	}
 	
   /* PUBLIC FUNCTIONS */
+  
+	public function GetVersion(): Number
+	{
+		return UILIB_VERSION;
+	}
+	
+	public function ForwardTo(master: Object): Void
+	{
+		myMaster_ = master;
+		
+		// Disable message holder of this notification area.
+		// Messages will be displayed by master instead.
+		if (isActive_)
+		{
+			isActive_ = false;
+			
+			var hudMovie = _root.HUDMovieBaseInstance;
+			var hudElements = hudMovie.HudElements;
+			
+			var idx = hudElements.indexOf(messageHolder);
+			if (idx != undefined)
+			{
+				hudElements.splice(idx,1);
+			}
+			messageHolder._visible = false;
+		}
+	}
 
 	public function onLoad(): Void
+	{
+		var curMaster = _root.UILIB_MASTER_INSTANCE;
+
+		if (curMaster != null) {
+			var curVersion = curMaster.GetVersion();
+			
+			if (curVersion < UILIB_VERSION) {
+				_root.UILIB_MASTER_INSTANCE = this;
+				curMaster.ForwardTo(this);				
+			} else {
+				this.ForwardTo(curMaster);
+			}
+		} else {
+			_root.UILIB_MASTER_INSTANCE = this;
+		}
+		
+		// No need to hook anything if the master is already doing it
+		if (myMaster_ == null)
+			InitHook();
+	}
+	
+	public function InitHook(): Void
 	{
 		var hudMovie = _root.HUDMovieBaseInstance;
 		var hudElements = hudMovie.HudElements;
@@ -79,6 +143,8 @@ class uilib_1.NotificationArea extends MovieClip
 			hudElements.splice(idx,1);
 		}
 		oldMessagesBlock._visible = false;
+		
+		isActive_ = true;
 	}
 	
 	function Hook_ShowMessage(a_message: String): Void
