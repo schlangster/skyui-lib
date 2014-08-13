@@ -56,6 +56,9 @@
 					msgClip.iconFrame = msgData.iconFrame;
 					msgClip.onLoadInit = function(a_icon: MovieClip)
 					{
+						a_icon._width = 24;
+						a_icon._height = 24;
+						
 						a_icon.gotoAndStop(this.iconFrame);
 					};
 				}
