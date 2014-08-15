@@ -48,16 +48,20 @@ String Function ShowTextInput(String asTitle = "", String asInitialText = "")
 EndFunction
 
 Event OnTextInputOpen(String asEventName, String asStringArg, Float afNumArg, Form akSender)
-	TextInputMenu_SetData(sTitle, sInitialText)
+	If(asEventName == "UILIB_1_textInputOpen")
+		TextInputMenu_SetData(sTitle, sInitialText)
+	EndIf
 EndEvent
 
 Event OnTextInputClose(String asEventName, String asInput, Float afCancelled, Form akSender)
-	If(afCancelled as Bool)
-		sInput = ""
-	Else
-		sInput = asInput
+	If(asEventName == "UILIB_1_textInputClose")
+		If(afCancelled as Bool)
+			sInput = ""
+		Else
+			sInput = asInput
+		EndIf
+		bMenuOpen = False
 	EndIf
-	bMenuOpen = False
 EndEvent
 
 ;List
@@ -103,12 +107,16 @@ Int Function ShowList(String asTitle = "", String[] asOptions, Int aiStartIndex,
 EndFunction
 
 Event OnListMenuOpen(String asEventName, String asStringArg, Float afNumArg, Form akSender)
-	ListMenu_SetData(sTitle, sOptions, iStartIndex, iDefaultIndex)
+	If(asEventName == "UILIB_1_listMenuOpen")
+		ListMenu_SetData(sTitle, sOptions, iStartIndex, iDefaultIndex)
+	EndIf
 EndEvent
 
 Event OnListMenuClose(String asEventName, String asStringArg, Float afInput, Form akSender)
-	iInput = afInput as Int
-	bMenuOpen = False
+	If(asEventName == "UILIB_1_listMenuClose")
+		iInput = afInput as Int
+		bMenuOpen = False
+	EndIf
 EndEvent
 
 ;Notification
