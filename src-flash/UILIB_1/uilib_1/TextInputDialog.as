@@ -130,6 +130,7 @@ class uilib_1.TextInputDialog extends MovieClip
 		titleText = Translator.translateNested(titleText);
 		titleTextField.SetText(titleText.toUpperCase());
 		
+		initText = Translator.translateNested(initText);
 		textInput.text = initText;
 		_visible = true;
 	}
