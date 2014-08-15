@@ -195,7 +195,7 @@ class uilib_1.ListDialog extends MovieClip
 	{
 		// Title text
 		titleTextField.textAutoSize = "shrink";
-		titleText = Translator.translate(titleText);
+		titleText = Translator.translateNested(titleText);
 		titleTextField.SetText(titleText.toUpperCase());
 		
 		// Store default index
