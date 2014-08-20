@@ -1,5 +1,5 @@
 ScriptName UILIB_1 Extends Form
-{API for various menus in UILib}
+{SkyUILib API - Version 1}
 
 ;Private variables
 Bool bMenuOpen
@@ -120,7 +120,7 @@ Event OnListMenuClose(String asEventName, String asStringArg, Float afInput, For
 EndEvent
 
 ;Notification
-Function ShowNotification(String asMessage, String asColor = "#FFFFFF") global
+Function ShowNotification(String asMessage, String asColor = "#FFFFFF")
 	If(!NotificationMenu_PrepareArea())
 		Return
 	EndIf
@@ -132,7 +132,7 @@ Function ShowNotification(String asMessage, String asColor = "#FFFFFF") global
 	EndIf
 EndFunction
 
-Function ShowNotificationIcon(String asMessage, String asIconPath, Int aiIconFrame = 0, String asColor = "#FFFFFF") global
+Function ShowNotificationIcon(String asMessage, String asIconPath, Int aiIconFrame = 0, String asColor = "#FFFFFF")
 	If(!NotificationMenu_PrepareArea())
 		Return
 	EndIf
